@@ -37,7 +37,7 @@ object ScalaJsMap extends AutoPlugin {
       val repository = new FileRepositoryBuilder().findGitDir(sourceDirectory.value).build()
       raw"""-P:scalajs:mapSourceURI:${
         repository.getWorkTree.toURI
-      }->https://raw.githubusercontent.com/${
+      }->https://github.com/${
         val remoteOriginUrl = repository.getConfig.getString(CONFIG_KEY_REMOTE, "origin", CONFIG_KEY_URL)
         remoteOriginUrl match {
           case SshUrlRegex(slug) =>
@@ -56,7 +56,7 @@ object ScalaJsMap extends AutoPlugin {
                 throw new MessageOnlyException(s"The code base should be cloned from Github, not $remoteOriginUrl")
             }
         }
-      }/${
+      }/raw/${
         repository.resolve(HEAD).name
       }/"""
     })
