@@ -7,7 +7,7 @@
 
 ## Motivation
 
-I have some Scala.js libraries hosted on Github ([Binding.scala](https://github.com/ThoughtWorksInc/Binding.scala) and some private libraries). Then, other Scala.js applications would depend on these libraries. When I debug the Scala.js application in a browser, I want to see the Scala source file of the original libraries.
+I have some Scala.js libraries hosted on Github ([Binding.scala](https://github.com/ThoughtWorksInc/Binding.scala) and some private libraries). Then, other Scala.js applications would depend on these libraries. When I debug the Scala.js application in a browser, I want to see the Scala source files of the original libraries.
 
 However, by default, the generated `*.js.map` files maps the generated JavaScript to the absolute Scala source path where the original library compiled. For me, the path is on a Travis CI worker, like `/home/travis/build/ThoughtWorksInc/.../Binding.scala`. The path obviously does not exist my local computer that debugs the application. Too bad.
 
