@@ -29,7 +29,7 @@ On the other hand, libraries published with this plugin enable the library users
 addSbtPlugin("com.thoughtworks.sbt-scala-js-map" % "sbt-scala-js-map" % "latest.release")
 ```
 
-### Step 2: Enable this plugin in your Scala.js library's `build.sbt'
+### Step 2: Enable this plugin in your Scala.js library's `build.sbt`
 
 ``` sbt
 enablePlugins(ScalaJsMap)
