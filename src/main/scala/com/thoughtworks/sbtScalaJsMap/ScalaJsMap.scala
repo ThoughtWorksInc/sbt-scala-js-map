@@ -34,7 +34,7 @@ object ScalaJsMap extends AutoPlugin {
 
   override final lazy val projectSettings = Seq(
     scalacOptions += {
-      val repository = new FileRepositoryBuilder().findGitDir().build()
+      val repository = new FileRepositoryBuilder().findGitDir(sourceDirectory.value).build()
       raw"""-P:scalajs:mapSourceURI:${
         repository.getWorkTree.toURI
       }->https://raw.githubusercontent.com/${
