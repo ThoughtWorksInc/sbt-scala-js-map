@@ -43,12 +43,17 @@ object ScalaJsMap extends AutoPlugin {
           case SshUrlRegex(slug) =>
             slug
           case _ =>
-            val url = new URL(remoteOriginUrl)
-            if (url.getHost == "github.com") {
-              val OptionalGitSuffixRegex(slug) = url.getPath
-              slug
-            } else {
-              throw new MessageOnlyException(s"The code base should be cloned from Github, not $remoteOriginUrl")
+            try {
+              val url = new URL(remoteOriginUrl)
+              if (url.getHost == "github.com") {
+                val OptionalGitSuffixRegex(slug) = url.getPath
+                slug
+              } else {
+                throw new MessageOnlyException(s"The code base should be cloned from Github, not $remoteOriginUrl")
+              }
+            } catch {
+              case _: MalformedURLException =>
+                throw new MessageOnlyException(s"The code base should be cloned from Github, not $remoteOriginUrl")
             }
         }
       }/${
