@@ -12,7 +12,7 @@ description := "A Sbt plugin that setup source mapping for Scala.js projects hos
 
 homepage := Some(url(raw"""https://github.com/ThoughtWorksInc/${name.value}"""))
 
-startYear := Some(2015)
+startYear := Some(2016)
 
 licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
@@ -21,15 +21,14 @@ scmInfo := Some(ScmInfo(
   raw"""scm:git:https://github.com/ThoughtWorksInc/${name.value}.git""",
   Some(raw"""scm:git:git@github.com:ThoughtWorksInc/${name.value}.git""")))
 
-pomExtra :=
-  <developers>
-    <developer>
-      <id>Atry</id>
-      <name>杨博</name>
-      <timezone>+8</timezone>
-      <email>pop.atry@gmail.com</email>
-    </developer>
-  </developers>
+developers in ThisBuild := List(
+  Developer(
+    "Atry",
+    "杨博 (Yang Bo)",
+    "pop.atry@gmail.com",
+    url("https://github.com/Atry")
+  )
+)
 
 scalacOptions += "-deprecation"
 
