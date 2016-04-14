@@ -1,6 +1,7 @@
 # sbt-scala-js-map
 
 [![Build Status](https://travis-ci.org/ThoughtWorksInc/sbt-scala-js-map.svg?branch=master)](https://travis-ci.org/ThoughtWorksInc/sbt-scala-js-map)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.thoughtworks.sbt-scala-js-map/sbt-scala-js-map/badge.svg)](http://central.maven.org/maven2/com/thoughtworks/sbt-scala-js-map/)
 
 **sbt-scala-js-map** is a Sbt plugin that setup source mapping for Scala.js projects hosted on Github.
 
@@ -16,7 +17,9 @@ This sbt plugin detects if a library is hosted on Github repository and let sour
 
 ### Step 1: Add the dependencies in your Scala.js library's `project/plugins.sbt`
 
-See [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.thoughtworks.sbt-scala-js-map/sbt-scala-js-map/badge.svg)](http://central.maven.org/maven2/com/thoughtworks/sbt-scala-js-map/) for the group ID and artifact ID.
+``` sbt
+addSbtPlugin("com.thoughtworks.sbt-scala-js-map" % "sbt-scala-js-map" % "latest.release")
+```
 
 ### Step 2: Enable this plugin in your Scala.js library's `build.sbt'
 
