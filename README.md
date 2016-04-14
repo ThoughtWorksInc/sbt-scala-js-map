@@ -8,7 +8,7 @@
 
 ### Add the dependencies in your `project/plugins.sbt`
 
-See [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.thoughtworks.sbt-scala-js-map/sbt-scala-js-map/badge.svg)](https://central.maven.org/maven2/com/thoughtworks/sbt-scala-js-map/) for the group ID and artifact ID.
+See [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.thoughtworks.sbt-scala-js-map/sbt-scala-js-map/badge.svg)](http://central.maven.org/maven2/com/thoughtworks/sbt-scala-js-map/) for the group ID and artifact ID.
 
 ### Enable this plugin in your Scala.js project's `build.sbt'
 
