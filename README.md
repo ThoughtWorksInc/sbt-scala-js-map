@@ -15,7 +15,7 @@ This sbt plugin detects if a library is hosted on Github repository and let sour
 
 ### Alternative Options
 
-An alternative Option is specifiy relative source mappings flag for Scala.js SBT plugin.
+An alternative Option is specifying relative source mappings flag for Scala.js SBT plugin.
 
 However, this approach enforce library users cloning the library's source files into their local file system before debugging their applications.
 
