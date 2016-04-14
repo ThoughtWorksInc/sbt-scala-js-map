@@ -13,9 +13,9 @@ However, by default, the generated `*.js.map` files maps the generated JavaScrip
 
 This sbt plugin detects if a library is hosted on Github repository and let source map point to https://raw.githubusercontent.com/ instead of a local file path.
 
-### Alternative Options
+### Alternative options
 
-An alternative Option is specifying relative source mappings flag for Scala.js SBT plugin.
+An alternative option is specifying Scala.js's relative source mappings flag.
 
 However, this approach enforce library users cloning the library's source files into their local file system before debugging their applications.
 
