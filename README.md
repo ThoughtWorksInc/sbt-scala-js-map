@@ -29,6 +29,8 @@ enablePlugins(ScalaJsMap)
 
 ## Step 3: Publish your Scala.js library
 
+Execute the release command if you have setup [sbt-release](https://github.com/sbt/sbt-release) correctly。
+
 ```
 sbt release
 ```
