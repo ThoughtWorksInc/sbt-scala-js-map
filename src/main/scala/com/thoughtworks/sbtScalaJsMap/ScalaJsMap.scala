@@ -32,6 +32,8 @@ object ScalaJsMap extends AutoPlugin {
 
   override final def requires = ScalaJSPlugin
 
+  override def trigger = allRequirements
+
   override final lazy val projectSettings = Seq(
     scalacOptions += {
       val repository = new FileRepositoryBuilder().findGitDir(sourceDirectory.value).build()
