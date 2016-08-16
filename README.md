@@ -1,6 +1,6 @@
-# sbt-scala-js-map <a href="http://thoughtworks.com/"><img align="right" src="https://www.thoughtworks.com/imgs/tw-logo.png" title="ThoughtWorks" height="15em"/></a>
+# sbt-scala-js-map <a href="http://thoughtworks.com/"><img align="right" src="https://www.thoughtworks.com/imgs/tw-logo.png" title="ThoughtWorks" height="15"/></a>
 
-[![Build Status](https://travis-ci.org/ThoughtWorksInc/sbt-scala-js-map.svg?branch=master)](https://travis-ci.org/ThoughtWorksInc/sbt-scala-js-map)
+[![Build Status](https://travis-ci.org/ThoughtWorksInc/sbt-scala-js-map.svg)](https://travis-ci.org/ThoughtWorksInc/sbt-scala-js-map)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.thoughtworks.sbt-scala-js-map/sbt-scala-js-map/badge.svg)](http://central.maven.org/maven2/com/thoughtworks/sbt-scala-js-map/)
 
 **sbt-scala-js-map** is a Sbt plugin that configures source mapping for Scala.js projects hosted on Github.
