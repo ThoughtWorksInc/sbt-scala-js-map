@@ -29,13 +29,7 @@ On the other hand, libraries published with this plugin enable the library users
 addSbtPlugin("com.thoughtworks.sbt-scala-js-map" % "sbt-scala-js-map" % "latest.release")
 ```
 
-### Step 2: Enable this plugin in your Scala.js library's `build.sbt`
-
-``` sbt
-enablePlugins(ScalaJsMap)
-```
-
-## Step 3: Publish your Scala.js library
+### Step 2: Publish your Scala.js library
 
 Execute the release command if you have setup [sbt-release](https://github.com/sbt/sbt-release) correctly。
 
@@ -43,6 +37,6 @@ Execute the release command if you have setup [sbt-release](https://github.com/s
 sbt release
 ```
 
-### Step 4: Debug it!
+### Step 3: Debug it!
 
 Now switch your Scala.js application to the newly published Scala.js library, build it, browse your web page, and open the debugger in your browser. You will see the Scala source files hosted under https://raw.githubusercontent.com/ and you can set break points at code lines in these Scala files.
