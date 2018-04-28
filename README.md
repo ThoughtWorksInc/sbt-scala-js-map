@@ -13,6 +13,12 @@ However, by default, the generated `*.js.map` files maps the generated JavaScrip
 
 This sbt plugin detects if a library is hosted on Github repository and let source map point to https://raw.githubusercontent.com/ instead of a local file path.
 
+### Showcase
+
+Browse http://todomvc.com/examples/binding-scala/ then open the inspector of your browser. You will be able to debug the Scala.js code in your browser now.
+
+![Debugging Scala.js](https://github.com/ThoughtWorksInc/sbt-scala-js-map/raw/master/README.png)
+
 ### Alternative options
 
 An alternative option is specifying Scala.js's relative source mappings flag.
