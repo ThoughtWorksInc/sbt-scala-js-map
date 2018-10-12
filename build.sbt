@@ -8,6 +8,6 @@ description := "A Sbt plugin that setup source mapping for Scala.js projects hos
 
 startYear := Some(2016)
 
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.21")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.25")
 
 libraryDependencies += "org.eclipse.jgit" % "org.eclipse.jgit" % "4.11.4.201810060650-r"
