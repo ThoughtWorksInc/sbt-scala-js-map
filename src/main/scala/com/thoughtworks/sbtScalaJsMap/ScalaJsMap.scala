@@ -12,56 +12,87 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
+ */
 
 package com.thoughtworks.sbtScalaJsMap
 
-import sbt._
-import Keys._
-import org.scalajs.sbtplugin.ScalaJSPlugin
+import java.net._
+
+import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.ConfigConstants._
 import org.eclipse.jgit.lib.Constants._
+import org.eclipse.jgit.revwalk.{RevWalk, RevWalkUtils}
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-import java.net._
+import org.eclipse.jgit.transport.RemoteConfig
+import org.scalajs.sbtplugin.ScalaJSPlugin
+import sbt.Keys._
+import sbt._
+
+import scala.collection.JavaConverters._
 
 object ScalaJsMap extends AutoPlugin {
 
-  private val OptionalGitSuffixRegex = """(.*?)(?:\.git)?+""".r
+  override final def projectSettings =
+    Seq(scalacOptions ++= {
+      val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+      if (repositoryBuilder.getGitDir == null) {
+        None
+      } else {
+        val repository = repositoryBuilder.build()
+        try {
+          val git = new Git(repository)
+          try {
+            if (git.status().call().isClean) {
+              val head = repository.resolve(HEAD)
+              val unreachableOriginBranches = {
+                val revWalk = new RevWalk(repository)
+                try {
+                  RevWalkUtils
+                    .findBranchesReachableFrom(
+                      revWalk.lookupCommit(head),
+                      revWalk,
+                      repository.getRefDatabase.getRefsByPrefix(s"$R_REMOTES$DEFAULT_REMOTE_NAME/")
+                    )
+                    .isEmpty
 
+                } finally {
+                  revWalk.close()
+                }
+              }
+
+              if (unreachableOriginBranches) {
+                None
+              } else {
+                new RemoteConfig(repository.getConfig, DEFAULT_REMOTE_NAME).getURIs.asScala.collectFirst {
+                  case url if url.getHost == "github.com" =>
+                    val path = url.getPath
+                    val slug = if (path.endsWith(DOT_GIT_EXT)) {
+                      path.substring(0, path.length - DOT_GIT_EXT.length)
+                    } else {
+                      path
+                    }
+                    raw"""-P:scalajs:mapSourceURI:${repository.getWorkTree.toURI}->https://github.com/$slug/raw/${head.name}/"""
+                }
+
+              }
+            } else {
+              None
+            }
+          } finally {
+            git.close()
+          }
+        } finally {
+          repository.close()
+        }
+      }
+    })
+
+  private val OptionalGitSuffixRegex = """(.*?)(?:\.git)?+""".r
   private val SshUrlRegex = """git@github.com:(.*?)(?:\.git)?+""".r
 
   override final def requires = ScalaJSPlugin
 
   override def trigger = allRequirements
-
-  override final lazy val projectSettings = Seq(
-    scalacOptions += {
-      val repository = new FileRepositoryBuilder().findGitDir(sourceDirectory.value).build()
-      raw"""-P:scalajs:mapSourceURI:${
-        repository.getWorkTree.toURI
-      }->https://github.com/${
-        val remoteOriginUrl = repository.getConfig.getString(CONFIG_KEY_REMOTE, "origin", CONFIG_KEY_URL)
-        remoteOriginUrl match {
-          case SshUrlRegex(slug) =>
-            slug
-          case _ =>
-            try {
-              val url = new URL(remoteOriginUrl)
-              if (url.getHost == "github.com") {
-                val OptionalGitSuffixRegex(slug) = url.getPath
-                slug
-              } else {
-                throw new MessageOnlyException(s"The code base should be cloned from Github, not $remoteOriginUrl")
-              }
-            } catch {
-              case _: MalformedURLException =>
-                throw new MessageOnlyException(s"The code base should be cloned from Github, not $remoteOriginUrl")
-            }
-        }
-      }/raw/${
-        repository.resolve(HEAD).name
-      }/"""
-    })
 
 }
 
