@@ -10,4 +10,4 @@ startYear := Some(2016)
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.32")
 
-libraryDependencies += "org.eclipse.jgit" % "org.eclipse.jgit" % "5.7.0.202003110725-r"
+libraryDependencies += "org.eclipse.jgit" % "org.eclipse.jgit" % "5.11.0.202103091610-r"
