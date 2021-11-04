@@ -89,6 +89,8 @@ object ScalaJsMap extends AutoPlugin {
         }
       },
       isLatestSourcePushed := {
+        def isCi = sys.env.contains("CI")
+        def isLatestSourcePushedFromWorkTree = {
         val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
         if (repositoryBuilder.getGitDir == null) {
           false
@@ -97,10 +99,11 @@ object ScalaJsMap extends AutoPlugin {
           try {
             val git = new Git(repository)
             try {
-              git.status().call().isClean && {
+                def isClean = git.status().call().isClean
+                def unreachableOriginBranches = {
                 val head = repository.resolve(HEAD)
                 val revWalk = new RevWalk(repository)
-                val unreachableOriginBranches = try {
+                  try {
                   RevWalkUtils
                     .findBranchesReachableFrom(
                       revWalk.lookupCommit(head),
@@ -111,8 +114,8 @@ object ScalaJsMap extends AutoPlugin {
                 } finally {
                   revWalk.close()
                 }
-                !unreachableOriginBranches
               }
+                isClean && !unreachableOriginBranches
             } finally {
               git.close()
             }
@@ -120,6 +123,8 @@ object ScalaJsMap extends AutoPlugin {
             repository.close()
           }
         }
+        }
+        isCi || isLatestSourcePushedFromWorkTree
       },
       scalacOptions ++= {
         if (isLatestSourcePushed.value) {
