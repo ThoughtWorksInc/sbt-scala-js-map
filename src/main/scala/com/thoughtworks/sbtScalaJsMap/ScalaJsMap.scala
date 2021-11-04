@@ -39,7 +39,8 @@ object ScalaJsMap extends AutoPlugin {
     val isLatestSourcePushed =
       settingKey[Boolean]("Determine if the latest source files have been pushed to the remote git repository.")
     val scalaJsMapToGithubScalacOptions = settingKey[Seq[String]](
-      "The scalac options to create Scala.js source map to the corresponding Github URI if any.")
+      "The scalac options to create Scala.js source map to the corresponding Github URI if any."
+    )
 
   }
 
@@ -68,11 +69,12 @@ object ScalaJsMap extends AutoPlugin {
       scalaJsMapToGithubScalacOptions ++= {
         val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
         val repository = repositoryBuilder.build()
-        val head = try {
-          repository.resolve(HEAD)
-        } finally {
-          repository.close()
-        }
+        val head =
+          try {
+            repository.resolve(HEAD)
+          } finally {
+            repository.close()
+          }
         if (repositoryBuilder.getGitDir == null) {
           None
         } else {
@@ -91,38 +93,38 @@ object ScalaJsMap extends AutoPlugin {
       isLatestSourcePushed := {
         def isCi = sys.env.contains("CI")
         def isLatestSourcePushedFromWorkTree = {
-        val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
-        if (repositoryBuilder.getGitDir == null) {
-          false
-        } else {
-          val repository = repositoryBuilder.build()
-          try {
-            val git = new Git(repository)
+          val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+          if (repositoryBuilder.getGitDir == null) {
+            false
+          } else {
+            val repository = repositoryBuilder.build()
             try {
+              val git = new Git(repository)
+              try {
                 def isClean = git.status().call().isClean
                 def unreachableOriginBranches = {
-                val head = repository.resolve(HEAD)
-                val revWalk = new RevWalk(repository)
+                  val head = repository.resolve(HEAD)
+                  val revWalk = new RevWalk(repository)
                   try {
-                  RevWalkUtils
-                    .findBranchesReachableFrom(
-                      revWalk.lookupCommit(head),
-                      revWalk,
-                      repository.getRefDatabase.getRefsByPrefix(s"$R_REMOTES$DEFAULT_REMOTE_NAME/")
-                    )
-                    .isEmpty
-                } finally {
-                  revWalk.close()
+                    RevWalkUtils
+                      .findBranchesReachableFrom(
+                        revWalk.lookupCommit(head),
+                        revWalk,
+                        repository.getRefDatabase.getRefsByPrefix(s"$R_REMOTES$DEFAULT_REMOTE_NAME/")
+                      )
+                      .isEmpty
+                  } finally {
+                    revWalk.close()
+                  }
                 }
-              }
                 isClean && !unreachableOriginBranches
+              } finally {
+                git.close()
+              }
             } finally {
-              git.close()
+              repository.close()
             }
-          } finally {
-            repository.close()
           }
-        }
         }
         isCi || isLatestSourcePushedFromWorkTree
       },
