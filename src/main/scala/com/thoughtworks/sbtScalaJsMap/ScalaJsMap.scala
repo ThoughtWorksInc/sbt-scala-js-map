@@ -29,24 +29,81 @@ import sbt.Keys._
 import sbt._
 
 import scala.collection.JavaConverters._
+import org.eclipse.jgit.transport.URIish
 
 object ScalaJsMap extends AutoPlugin {
 
+  object autoImport {
+
+    val gitRemoteUris = settingKey[Seq[URIish]]("The remote git URIs to host the source code.")
+    val isLatestSourcePushed =
+      settingKey[Boolean]("Determine if the latest source files have been pushed to the remote git repository.")
+    val scalaJsMapToGithubScalacOptions = settingKey[Seq[String]](
+      "The scalac options to create Scala.js source map to the corresponding Github URI if any.")
+
+  }
+
+  import autoImport._
+
+  override def globalSettings: Seq[Setting[_]] = Seq(
+    gitRemoteUris := Seq.empty,
+    scalaJsMapToGithubScalacOptions := Seq.empty
+  )
+
   override final def projectSettings =
-    Seq(scalacOptions ++= {
-      val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
-      if (repositoryBuilder.getGitDir == null) {
-        None
-      } else {
-        val repository = repositoryBuilder.build()
-        try {
-          val git = new Git(repository)
+    Seq(
+      gitRemoteUris ++= {
+        val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+        if (repositoryBuilder.getGitDir == null) {
+          Seq.empty
+        } else {
+          val repository = repositoryBuilder.build()
           try {
-            if (git.status().call().isClean) {
-              val head = repository.resolve(HEAD)
-              val unreachableOriginBranches = {
+            new RemoteConfig(repository.getConfig, DEFAULT_REMOTE_NAME).getURIs.asScala
+          } finally {
+            repository.close()
+          }
+        }
+      },
+      scalaJsMapToGithubScalacOptions ++= {
+        val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+        val repository = repositoryBuilder.build()
+        val head = try {
+          repository.resolve(HEAD)
+        } finally {
+          repository.close()
+        }
+        if (repositoryBuilder.getGitDir == null) {
+          None
+        } else {
+          gitRemoteUris.value.collectFirst {
+            case url if url.getHost == "github.com" =>
+              val path = url.getPath
+              val slug = if (path.endsWith(DOT_GIT_EXT)) {
+                path.substring(0, path.length - DOT_GIT_EXT.length)
+              } else {
+                path
+              }
+              raw"""-P:scalajs:mapSourceURI:${repositoryBuilder.getWorkTree.toURI}->https://github.com/$slug/raw/${head.name}/"""
+          }
+        }
+      },
+      isLatestSourcePushed := {
+        def isCi = sys.env.contains("CI")
+        def isLatestSourcePushedFromWorkTree = {
+        val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+        if (repositoryBuilder.getGitDir == null) {
+          false
+        } else {
+          val repository = repositoryBuilder.build()
+          try {
+            val git = new Git(repository)
+            try {
+                def isClean = git.status().call().isClean
+                def unreachableOriginBranches = {
+                val head = repository.resolve(HEAD)
                 val revWalk = new RevWalk(repository)
-                try {
+                  try {
                   RevWalkUtils
                     .findBranchesReachableFrom(
                       revWalk.lookupCommit(head),
@@ -54,41 +111,29 @@ object ScalaJsMap extends AutoPlugin {
                       repository.getRefDatabase.getRefsByPrefix(s"$R_REMOTES$DEFAULT_REMOTE_NAME/")
                     )
                     .isEmpty
-
                 } finally {
                   revWalk.close()
                 }
               }
-
-              if (unreachableOriginBranches) {
-                None
-              } else {
-                new RemoteConfig(repository.getConfig, DEFAULT_REMOTE_NAME).getURIs.asScala.collectFirst {
-                  case url if url.getHost == "github.com" =>
-                    val path = url.getPath
-                    val slug = if (path.endsWith(DOT_GIT_EXT)) {
-                      path.substring(0, path.length - DOT_GIT_EXT.length)
-                    } else {
-                      path
-                    }
-                    raw"""-P:scalajs:mapSourceURI:${repository.getWorkTree.toURI}->https://github.com/$slug/raw/${head.name}/"""
-                }
-
-              }
-            } else {
-              None
+                isClean && !unreachableOriginBranches
+            } finally {
+              git.close()
             }
           } finally {
-            git.close()
+            repository.close()
           }
-        } finally {
-          repository.close()
+        }
+        }
+        isCi || isLatestSourcePushedFromWorkTree
+      },
+      scalacOptions ++= {
+        if (isLatestSourcePushed.value) {
+          scalaJsMapToGithubScalacOptions.value
+        } else {
+          Seq.empty
         }
       }
-    })
-
-  private val OptionalGitSuffixRegex = """(.*?)(?:\.git)?+""".r
-  private val SshUrlRegex = """git@github.com:(.*?)(?:\.git)?+""".r
+    )
 
   override final def requires = ScalaJSPlugin
 
