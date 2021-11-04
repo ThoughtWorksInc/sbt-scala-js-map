@@ -87,9 +87,6 @@ object ScalaJsMap extends AutoPlugin {
       }
     })
 
-  private val OptionalGitSuffixRegex = """(.*?)(?:\.git)?+""".r
-  private val SshUrlRegex = """git@github.com:(.*?)(?:\.git)?+""".r
-
   override final def requires = ScalaJSPlugin
 
   override def trigger = allRequirements
