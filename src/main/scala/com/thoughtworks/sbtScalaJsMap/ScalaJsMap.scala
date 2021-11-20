@@ -86,7 +86,13 @@ object ScalaJsMap extends AutoPlugin {
               } else {
                 path
               }
-              raw"""-P:scalajs:mapSourceURI:${repositoryBuilder.getWorkTree.toURI}->https://github.com/$slug/raw/${head.name}/"""
+              val key = CrossVersion.partialVersion(scalaVersion.value) match {
+                case Some((3, _)) =>
+                  "-scalajs-mapSourceURI"
+                case _ =>
+                  "-P:scalajs:mapSourceURI"
+              }
+              raw"""$key:${repositoryBuilder.getWorkTree.toURI}->https://github.com/$slug/raw/${head.name}/"""
           }
         }
       },
