@@ -35,9 +35,12 @@ object ScalaJsMap extends AutoPlugin {
 
   object autoImport {
 
-    val gitRemoteUris = settingKey[Seq[URIish]]("The remote git URIs to host the source code.")
+    val gitRemoteUris =
+      settingKey[Seq[URIish]]("The remote git URIs to host the source code.")
     val isLatestSourcePushed =
-      settingKey[Boolean]("Determine if the latest source files have been pushed to the remote git repository.")
+      settingKey[Boolean](
+        "Determine if the latest source files have been pushed to the remote git repository."
+      )
     val scalaJsMapToGithubScalacOptions = settingKey[Seq[String]](
       "The scalac options to create Scala.js source map to the corresponding Github URI if any."
     )
@@ -54,20 +57,25 @@ object ScalaJsMap extends AutoPlugin {
   override final def projectSettings =
     Seq(
       gitRemoteUris ++= {
-        val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+        val repositoryBuilder =
+          new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
         if (repositoryBuilder.getGitDir == null) {
           Seq.empty
         } else {
           val repository = repositoryBuilder.build()
           try {
-            new RemoteConfig(repository.getConfig, DEFAULT_REMOTE_NAME).getURIs.asScala
+            new RemoteConfig(
+              repository.getConfig,
+              DEFAULT_REMOTE_NAME
+            ).getURIs.asScala
           } finally {
             repository.close()
           }
         }
       },
       scalaJsMapToGithubScalacOptions ++= {
-        val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+        val repositoryBuilder =
+          new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
         val repository = repositoryBuilder.build()
         val head =
           try {
@@ -99,7 +107,8 @@ object ScalaJsMap extends AutoPlugin {
       isLatestSourcePushed := {
         def isCi = sys.env.contains("CI")
         def isLatestSourcePushedFromWorkTree = {
-          val repositoryBuilder = new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
+          val repositoryBuilder =
+            new FileRepositoryBuilder().findGitDir(sourceDirectory.value)
           if (repositoryBuilder.getGitDir == null) {
             false
           } else {
@@ -116,7 +125,8 @@ object ScalaJsMap extends AutoPlugin {
                       .findBranchesReachableFrom(
                         revWalk.lookupCommit(head),
                         revWalk,
-                        repository.getRefDatabase.getRefsByPrefix(s"$R_REMOTES$DEFAULT_REMOTE_NAME/")
+                        repository.getRefDatabase
+                          .getRefsByPrefix(s"$R_REMOTES$DEFAULT_REMOTE_NAME/")
                       )
                       .isEmpty
                   } finally {
