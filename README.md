@@ -35,7 +35,7 @@ On the other hand, libraries published with this plugin enable the library users
 addSbtPlugin("com.thoughtworks.sbt-scala-js-map" % "sbt-scala-js-map" % "latest.release")
 ```
 
-Note that sbt-scala-js-map 2.x requires sbt 0.13.x, sbt-api-mappings 3.x requires sbt 1.x.
+The plugin is cross-published for sbt 1.x and sbt 2.x. Older sbt-scala-js-map 2.x releases require sbt 0.13.x.
 
 
 ### Step 2: Publish your Scala.js library

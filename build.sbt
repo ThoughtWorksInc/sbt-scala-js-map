@@ -1,5 +1,12 @@
 sbtPlugin := true
 
+pluginCrossBuild / sbtVersion := {
+  scalaBinaryVersion.value match {
+    case "2.12" => sbtVersion.value
+    case _      => "2.1.1"
+  }
+}
+
 name := "sbt-scala-js-map"
 
 organization := "com.thoughtworks.sbt-scala-js-map"
