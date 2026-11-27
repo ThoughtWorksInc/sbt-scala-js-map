@@ -67,7 +67,7 @@ object ScalaJsMap extends AutoPlugin {
             new RemoteConfig(
               repository.getConfig,
               DEFAULT_REMOTE_NAME
-            ).getURIs.asScala
+            ).getURIs.asScala.toVector
           } finally {
             repository.close()
           }
