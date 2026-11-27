@@ -1,3 +1,5 @@
+enablePlugins(SbtPlugin)
+
 sbtPlugin := true
 
 pluginCrossBuild / sbtVersion := {
